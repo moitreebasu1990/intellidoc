@@ -10,6 +10,9 @@ document classification model. It includes:
 
 import pandas as pd
 import torch
+import re
+import unicodedata
+from html import unescape
 
 from intellidoc.classification_models.roberta import RobertaDocClassificationModel
 from intellidoc.data_processing.dataset import TextClassificationDataset
@@ -18,12 +21,37 @@ from intellidoc.utilities.save_load_model import load_model
 
 def preprocess_text(text):
     """
-    Placeholder preprocessing function.
-    Replace with actual preprocessing steps from your project.
+    Preprocess the input text for document classification.
+    
+    Steps:
+    1. HTML unescape
+    2. Unicode normalization
+    3. Convert to lowercase
+    4. Remove special characters and numbers
+    5. Remove extra whitespace
+    
+    Args:
+        text (str): Input text to preprocess
+        
+    Returns:
+        str: Preprocessed text
     """
-    # Add any text preprocessing steps here
-    # For example: lowercasing, removing special characters, etc.
-    return text.strip().lower()
+    # HTML unescape (convert HTML entities to characters)
+    text = unescape(text)
+    
+    # Unicode normalization
+    text = unicodedata.normalize('NFKD', text)
+    
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Remove special characters and numbers
+    text = re.sub(r'[^a-z\s]', ' ', text)
+    
+    # Remove extra whitespace
+    text = ' '.join(text.split())
+    
+    return text
 
 
 def load_inference_model(model_path="models/roberta_classification/", use_cpu=False):

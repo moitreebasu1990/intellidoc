@@ -241,3 +241,4 @@ pyrightconfig.json
 data/raw/
 poetry.lock
 .vscode
+.DS_Store
